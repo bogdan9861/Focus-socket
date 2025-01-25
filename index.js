@@ -1,5 +1,5 @@
 const io = require("socket.io")(
-  "https://guileless-clafoutis-9d01ff.netlify.app",
+  "https://focus-socket.onrender.com",
   {
     cors: {
       origin: ["https://guileless-clafoutis-9d01ff.netlify.app"],
