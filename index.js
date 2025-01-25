@@ -1,8 +1,11 @@
-const io = require("socket.io")(5050, {
-  cors: {
-    origin: ["https://guileless-clafoutis-9d01ff.netlify.app/"],
-  },
-});
+const io = require("socket.io")(
+  "https://guileless-clafoutis-9d01ff.netlify.app",
+  {
+    cors: {
+      origin: ["https://guileless-clafoutis-9d01ff.netlify.app"],
+    },
+  }
+);
 
 io.on("connection", (socket) => {
   socket.on("send-message", (room, message, time, id, audio) => {
@@ -13,7 +16,7 @@ io.on("connection", (socket) => {
 
   socket.on("send-status", (room, id, status) => {
     console.log(status);
-    
+
     io.emit("get-status", { writerId: id, status });
   });
 
