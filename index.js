@@ -1,11 +1,13 @@
-const io = require("socket.io")(
-  "https://focus-socket.onrender.com",
-  {
-    cors: {
-      origin: ["https://guileless-clafoutis-9d01ff.netlify.app"],
-    },
-  }
-);
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
+const httpServer = createServer();
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "https://guileless-clafoutis-9d01ff.netlify.app",
+  },
+});
 
 io.on("connection", (socket) => {
   socket.on("send-message", (room, message, time, id, audio) => {
