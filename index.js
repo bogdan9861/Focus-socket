@@ -1,16 +1,21 @@
+const express = require('express');
+const cors = require('cors');
+const app = express();
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
-const httpServer = createServer();
+app.use(cors({ origin: '*' }));
 
-const io = new Server(httpServer, {
+const server = createServer(app)
+
+const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
   },
 });
 
-httpServer.listen(5000, () => {
+server.listen(5000, () => {
   console.log("server is running");
 });
 
