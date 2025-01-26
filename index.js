@@ -9,6 +9,10 @@ const io = new Server(httpServer, {
   },
 });
 
+httpServer.listen(5000, () => {
+  console.log("server is running");
+});
+
 io.on("connection", (socket) => {
   socket.on("send-message", (room, message, time, id, audio) => {
     socket
