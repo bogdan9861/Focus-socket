@@ -1,12 +1,12 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 const app = express();
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: "*" }));
 
-const server = createServer(app)
+const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
@@ -20,10 +20,10 @@ server.listen(5000, () => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("send-message", (room, message, time, id, audio) => {
+  socket.on("send-message", (room, message, time, id, audio, file) => {
     socket
       .to(room)
-      .emit("recive-message", { message, time, userId: id, audio });
+      .emit("recive-message", { message, time, userId: id, audio, file });
   });
 
   socket.on("send-status", (room, id, status) => {
