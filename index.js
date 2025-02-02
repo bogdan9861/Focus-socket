@@ -19,17 +19,58 @@ server.listen(5000, () => {
   console.log("server is running");
 });
 
+const users = {};
+
 io.on("connection", (socket) => {
-  socket.on("send-message", (room, message, time, id, audio, file) => {
-    socket
-      .to(room)
-      .emit("recive-message", { message, time, userId: id, audio, file });
+  socket.on("auth", (userId) => {
+    if (users[userId]) {
+      users[userId].push(socket.id);
+    } else {
+      users[userId] = [socket.id];
+    }
+
+    socket.userId = userId;
+    console.log(`User ${userId} authenticated`);
+
+    console.log(users);
+  });
+
+  socket.on(
+    "send-message",
+    (room, message, time, reciverId, id, audio, file) => {
+      const socketIds = users[reciverId];
+
+      if (socketIds) {
+        socketIds.forEach((socketId) => {
+          io.to(socketId).emit("recive-message", {
+            room,
+            message,
+            time,
+            reciverId,
+            userId: id,
+            audio,
+            file,
+          });
+        });
+      } else {
+        console.log(`User with id: ${id} not found`);
+      }
+    }
+  );
+
+  socket.on("send-push-notification", (reciverId, title, message) => {
+    const socketIds = users[reciverId];
+    if (socketIds) {
+      socketIds.forEach((socketId) => {
+        io.to(socketId).emit("recive-push-notification", { title, message });
+      });
+    } else {
+      console.log(`User with id: ${reciverId} not found`);
+    }
   });
 
   socket.on("send-status", (room, id, status) => {
-    console.log(status);
-
-    io.emit("get-status", { writerId: id, status });
+    io.to(room).emit("get-status", { writerId: id, status });
   });
 
   socket.on("join-room", (room) => {
