@@ -10,6 +10,17 @@ app.use(cors({ origin: "*" }));
 
 const server = createServer(app);
 
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+server.listen(5000, () => {
+  console.log("server is running");
+});
+
 function getClientRooms() {
   const { rooms } = io.sockets.adapter;
 
@@ -23,17 +34,6 @@ function shareRoomsInfo() {
     rooms: getClientRooms(),
   });
 }
-
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
-
-server.listen(5000, () => {
-  console.log("server is running");
-});
 
 const users = {};
 
@@ -85,12 +85,20 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("send-status", (room, id, status) => {
-    io.to(room).emit("get-status", { writerId: id, status });
+  socket.on("send-status", (id, reciverId, status) => {
+    
+    const socketIds = users[reciverId];
+
+    console.log(reciverId);
+    
+
+    io.to(socketIds).emit("get-status", { writerId: id, status });
   });
 
   socket.on("send-call-offer", (photo, name, conferenceId, recipientId) => {
     const socketIds = users[recipientId];
+
+    console.log(name);
 
     socketIds?.forEach((socketId) => {
       io.to(socketId).emit("get-call-offer", {
