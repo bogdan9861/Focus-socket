@@ -51,28 +51,24 @@ io.on("connection", (socket) => {
     console.log(users);
   });
 
-  socket.on(
-    "send-message",
-    (room, message, time, reciverId, id, audio, file) => {
-      const socketIds = users[reciverId];
+  socket.on("send-message", (room, message, time, reciverId, id, fileUrl) => {
+    const socketIds = users[reciverId];
 
-      if (socketIds) {
-        socketIds.forEach((socketId) => {
-          io.to(socketId).emit("recive-message", {
-            room,
-            message,
-            time,
-            reciverId,
-            userId: id,
-            audio,
-            file,
-          });
+    if (socketIds) {
+      socketIds.forEach((socketId) => {
+        io.to(socketId).emit("recive-message", {
+          room,
+          message,
+          time,
+          reciverId,
+          userId: id,
+          fileUrl,
         });
-      } else {
-        console.log(`User with id: ${id} not found`);
-      }
+      });
+    } else {
+      console.log(`User with id: ${id} not found`);
     }
-  );
+  });
 
   socket.on("send-push-notification", (reciverId, title, message) => {
     const socketIds = users[reciverId];
@@ -86,11 +82,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-status", (id, reciverId, status) => {
-    
     const socketIds = users[reciverId];
 
     console.log(reciverId);
-    
 
     io.to(socketIds).emit("get-status", { writerId: id, status });
   });
