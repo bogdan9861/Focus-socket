@@ -88,9 +88,8 @@ io.on("connection", (socket) => {
       socketIds = users[reciverId];
     } else {
       socket.emit("get-status", { id, status });
+      return;
     }
-
-    console.log(reciverId);
 
     io.to(socketIds).emit("get-status", { writerId: id, status });
   });
