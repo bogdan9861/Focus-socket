@@ -17,7 +17,7 @@ const io = new Server(server, {
   },
 });
 
-server.listen(5000, () => {
+server.listen(8080, () => {
   console.log("server is running");
 });
 
@@ -90,6 +90,8 @@ io.on("connection", (socket) => {
       socketIds = users[reciverId];
     } else {
       socket.emit("get-status", { id, status });
+      console.log(id, status);
+
       return;
     }
 
@@ -98,8 +100,6 @@ io.on("connection", (socket) => {
 
   socket.on("send-call-offer", (photo, name, conferenceId, recipientId) => {
     const socketIds = users[recipientId];
-
-    console.log(name);
 
     socketIds?.forEach((socketId) => {
       io.to(socketId).emit("get-call-offer", {
