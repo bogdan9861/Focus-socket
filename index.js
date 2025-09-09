@@ -54,6 +54,8 @@ io.on("connection", (socket) => {
   socket.on("send-message", (room, message, time, reciverId, id, fileUrl) => {
     const socketIds = users[reciverId];
 
+    console.log(socketIds);
+
     if (socketIds) {
       socketIds.forEach((socketId) => {
         io.to(socketId).emit("recive-message", {
