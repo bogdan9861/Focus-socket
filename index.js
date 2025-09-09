@@ -82,7 +82,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-status", (id, reciverId, status) => {
-    const socketIds = users[reciverId];
+    let socketIds;
+
+    if (reciverId) {
+      socketIds = users[reciverId];
+    } else {
+      socket.emit("get-status", { id, status });
+    }
 
     console.log(reciverId);
 
