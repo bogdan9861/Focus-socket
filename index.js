@@ -53,6 +53,7 @@ io.on("connection", (socket) => {
 
   socket.on("user:online", (userId) => {
     onlineUsers.add(userId);
+    socket.data.userId = userId;
     io.emit("users:online", Array.from(onlineUsers));
   });
 
@@ -181,5 +182,13 @@ io.on("connection", (socket) => {
       peerID: socket.id,
       iceCandidate,
     });
+  });
+
+  socket.on("disconnect", () => {
+    const { userId } = socket.data || {};
+    if (userId) {
+      onlineUsers.delete(userId);
+      io.emit("users:online", Array.from(onlineUsers));
+    }
   });
 });
