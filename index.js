@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
     if (reciverId) {
       socket = users[reciverId];
     } else {
-      io.emit("get-status", id, status);
+      socket.emit("get-status", id, status);
     }
 
     io.to(socketIds).emit("get-status", { writerId: id, status });
