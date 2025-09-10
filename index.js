@@ -83,16 +83,12 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("send-status", (id, reciverId, status) => {
-    let socketIds;
-
-    if (reciverId) {
-      socket = users[reciverId];
+  socket.on("send-status", (id, receiverId, status) => {
+    if (receiverId && users[receiverId]) {
+      io.to(users[receiverId]).emit("get-status", { userId: id, status });
     } else {
-      socket.emit("get-status", id, status);
+      io.emit("get-status", { userId: id, status });
     }
-
-    io.to(socketIds).emit("get-status", { writerId: id, status });
   });
 
   socket.on("send-call-offer", (photo, name, conferenceId, recipientId) => {
