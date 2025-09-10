@@ -36,6 +36,7 @@ function shareRoomsInfo() {
 }
 
 const users = {};
+const onlineUsers = new Set();
 
 io.on("connection", (socket) => {
   socket.on("auth", (userId) => {
@@ -46,9 +47,13 @@ io.on("connection", (socket) => {
     }
 
     socket.userId = userId;
-    console.log(`User ${userId} authenticated`);
 
     console.log(users);
+  });
+
+  socket.on("user:online", (userId) => {
+    onlineUsers.add(userId);
+    io.emit("users:online", Array.from(onlineUsers));
   });
 
   socket.on("send-message", (room, message, time, reciverId, id, fileUrl) => {
